@@ -1,65 +1,62 @@
 #!/usr/bin/python3
 """
-Module for Prime Game
+Prime Game Module
 """
-
-
-def is_prime(n):
-    """Helper function to determine if a number is prime."""
-    if n <= 1:
-        return False
-    for i in range(2, int(n ** 0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
-
-
-def sieve_of_eratosthenes(n):
-    """Helper function to generate a list of prime numbers up to n."""
-    sieve = [True] * (n + 1)
-    sieve[0] = sieve[1] = False
-    for i in range(2, int(n ** 0.5) + 1):
-        if sieve[i]:
-            for j in range(i * i, n + 1, i):
-                sieve[j] = False
-    primes = [i for i, is_prime in enumerate(sieve) if is_prime]
-    return primes
 
 
 def isWinner(x, nums):
     """
-    Determines the winner of the prime game after x rounds.
-    Maria and Ben take turns removing primes and their multiples.
+    Determines the winner of the Prime Game.
+
+    Args:
+    x (int): The number of rounds.
+    nums (list): An array of n for each round.
+
+    Returns:
+    str: Name of the player that won the most rounds.
+         If the winner cannot be determined, returns None.
     """
-    if x < 1 or not nums:
+    if not nums or x < 1:
         return None
 
-    # Initialize scores
-    maria_score = 0
-    ben_score = 0
+    maria_wins = 0
+    ben_wins = 0
 
-    # For each round
+    def sieve_of_eratosthenes(n):
+        """
+        Generates primes up to n using the Sieve of Eratosthenes algorithm.
+
+        Args:
+        n (int): Upper limit for generating primes.
+
+        Returns:
+        list: A list of boolean values where True indicates a prime number.
+        """
+        primes = [True] * (n + 1)
+        primes[0] = primes[1] = False
+        for i in range(2, int(n**0.5) + 1):
+            if primes[i]:
+                for j in range(i*i, n + 1, i):
+                    primes[j] = False
+        return primes
+
     for n in nums:
         primes = sieve_of_eratosthenes(n)
-        turn = 0  # Maria starts
+        prime_count = sum(primes)
 
-        # Simulate game by removing primes and their multiples
-        while primes:
-            turn += 1
-            # Remove the prime numbers and their multiples
-            p = primes.pop(0)
-            primes = [i for i in primes if i % p != 0]
-
-        # If turn is odd, Maria made the last move, else Ben did
-        if turn % 2 != 0:
-            maria_score += 1
+        # If the number of primes is odd, Maria wins, otherwise Ben wins
+        if prime_count % 2 == 1:
+            maria_wins += 1
         else:
-            ben_score += 1
+            ben_wins += 1
 
-    # Determine the overall winner
-    if maria_score > ben_score:
+    if maria_wins > ben_wins:
         return "Maria"
-    elif ben_score > maria_score:
+    elif ben_wins > maria_wins:
         return "Ben"
     else:
         return None
+
+
+if __name__ == "__main__":
+    print("This module is not meant to be executed directly.")
